@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人主页 · 陕西高校评分</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif}
+html{scroll-behavior:smooth}
+body{background:#fbfbfd;color:#1d1d1f;line-height:1.6;overflow-x:hidden}
+.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 24px;background:linear-gradient(180deg,#fff 0%,#fbfbfd 100%)}
+.hero h1{font-size:clamp(36px,8vw,72px);font-weight:700;letter-spacing:-0.02em;color:#1d1d1f;animation:fadeUp .8s ease both}
+.hero p{font-size:clamp(18px,3vw,26px);color:#6e6e73;margin-top:16px;animation:fadeUp .8s .15s ease both}
+.hero a{margin-top:32px;color:#0066cc;font-size:19px;text-decoration:none;animation:fadeUp .8s .3s ease both}
+.hero a:hover{text-decoration:underline}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.wrap{max-width:980px;margin:0 auto;padding:60px 24px}
+.tabbar{display:flex;gap:12px;margin-bottom:40px}
+.tab-btn{flex:1;padding:16px;border:none;border-radius:18px;background:#fff;font-size:18px;font-weight:500;color:#1d1d1f;box-shadow:0 4px 20px rgba(0,0,0,0.06);cursor:pointer;transition:all .35s cubic-bezier(.25,.46,.45,.94)}
+.tab-btn.active{background:#1d1d1f;color:#fff;transform:scale(1.02)}
+.tab-btn:hover{transform:scale(1.02)}
+.panel{display:none;opacity:0;transform:translateY(16px);transition:all .45s cubic-bezier(.25,.46,.45,.94)}
+.panel.show{display:block;opacity:1;transform:translateY(0)}
+.glass-card{background:rgba(255,255,255,0.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-radius:24px;padding:36px;margin-bottom:28px;box-shadow:0 8px 32px rgba(0,0,0,0.07)}
+.glass-card h2{font-size:30px;font-weight:600;letter-spacing:-0.01em;margin-bottom:20px}
+.info-row{padding:14px 0;border-bottom:1px solid rgba(0,0,0,0.08);font-size:18px;color:#333}
+.info-row:last-child{border-bottom:none}
+label{display:block;font-size:17px;font-weight:500;margin:20px 0 8px;color:#1d1d1f}
+select,input,textarea{width:100%;padding:14px 16px;border:none;border-radius:14px;background:#f5f5f7;font-size:17px;outline:none;transition:all .25s}
+select:focus,input:focus,textarea:focus{background:#fff;box-shadow:0 0 0 3px rgba(0,102,204,0.22)}
+textarea{min-height:110px;resize:vertical}
+.slider-item{margin:22px 0}
+.slider-item .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.slider-item .name{font-size:17px}
+.slider-item .num{font-size:18px;font-weight:600;color:#0066cc}
+input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:#d2d2d7;outline:none;cursor:pointer;transition:all .2s}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.25);cursor:grab;transition:transform .18s ease}
+input[type="range"]::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.15)}
+input[type="range"]::-moz-range-thumb{width:28px;height:28px;border:none;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.25);cursor:grab}
+.submit-btn{width:100%;padding:17px;border:none;border-radius:18px;background:#0066cc;color:#fff;font-size:19px;font-weight:600;cursor:pointer;margin-top:24px;transition:all .3s cubic-bezier(.25,.46,.45,.94)}
+.submit-btn:hover{background:#0077ed;transform:scale(1.01)}
+.submit-btn:active{transform:scale(0.98)}
+.avg-box{margin-top:28px;padding:26px;border-radius:20px;background:#f5f5f7;text-align:center}
+.avg-box .txt{font-size:18px;color:#6e6e73}
+.avg-box .score{font-size:56px;font-weight:700;color:#0066cc;letter-spacing:-0.02em}
+.toast{position:fixed;left:50%;bottom:40px;transform:translate(-50%,120px);opacity:0;padding:14px 26px;border-radius:16px;background:#1d1d1f;color:#fff;font-size:16px;transition:all .4s cubic-bezier(.25,.46,.45,.94);z-index:99}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.history-item{padding:16px 0;border-bottom:1px solid rgba(0,0,0,0.08);font-size:16px}
+.footer{text-align:center;padding:50px;color:#86868b;font-size:15px}
+</style>
+</head>
+<body>
+<section class="hero">
+<h1>个人主页</h1>
+<p>陕西高校评分互动系统</p>
+<a href="#main">向下探索 ›</a>
+</section>
+<div class="wrap" id="main">
+<div class="tabbar">
+<button class="tab-btn active" onclick="switchTab(0)">关于我</button>
+<button class="tab-btn" onclick="switchTab(1)">高校打分</button>
+</div>
+
+<div class="panel show" id="p0">
+<div class="glass-card">
+<h2>个人信息</h2>
+<div class="info-row">出生年份：2005年</div>
+<div class="info-row">毕业院校：西安交通大学城市学院</div>
+</div>
+<div class="glass-card">
+<h2>实习经历</h2>
+<div class="info-row">西安大洋供应链有限公司｜2024.07 - 2024.08</div>
+<div class="info-row">上海蔚来汽车有限公司｜实习</div>
+</div>
+<div class="glass-card">
+<h2>联系方式</h2>
+<div class="info-row">微信号：FEM0098</div>
+</div>
+</div>
+
+<div class="panel" id="p1">
+<div class="glass-card">
+<h2>陕西高校评分</h2>
+<label>选择院校</label>
+<select id="school">
+<option value="">--请选择--</option>
+<option>西安交通大学</option>
+<option>西北工业大学</option>
+<option>西北农林科技大学</option>
+<option>西安电子科技大学</option>
+<option>陕西师范大学</option>
+<option>西北大学</option>
+<option>长安大学</option>
+<option>西安理工大学</option>
+<option>西安建筑科技大学</option>
+<option>陕西科技大学</option>
+<option>西安科技大学</option>
+<option>西安石油大学</option>
+<option>西安工业大学</option>
+<option>西安外国语大学</option>
+<option>西北政法大学</option>
+<option>西安邮电大学</option>
+<option>西安财经大学</option>
+<option>西安工程大学</option>
+<option>陕西理工大学</option>
+<option>宝鸡文理学院</option>
+<option>咸阳师范学院</option>
+<option>渭南师范学院</option>
+<option>延安大学</option>
+<option>榆林学院</option>
+<option>安康学院</option>
+<option>商洛学院</option>
+<option>西安文理学院</option>
+<option>陕西学前师范学院</option>
+<option>西安培华学院</option>
+<option>西安欧亚学院</option>
+<option>西安外事学院</option>
+<option>西安翻译学院</option>
+<option>西京学院</option>
+<option>陕西服装工程学院</option>
+<option>陕西国际商贸学院</option>
+<option>西安思源学院</option>
+<option>西安交通大学城市学院</option>
+<option>西北大学现代学院</option>
+<option>西安建筑科技大学华清学院</option>
+<option>西安电子科技大学长安学院</option>
+<option>长安大学兴华学院</option>
+<option>陕西科技大学镐京学院</option>
+<option>西安理工大学高科学院</option>
+<option>西安科技大学高新学院</option>
+</select>
+
+<div class="slider-item">
+<div class="top"><span class="name">教学质量</span><span class="num" id="n1">5</span></div>
+<input type="range" min="1" max="10" value="5" id="s1" oninput="update('s1','n1')">
+</div>
+<div class="slider-item">
+<div class="top"><span class="name">师资力量</span><span class="num" id="n2">5</span></div>
+<input type="range" min="1" max="10" value="5" id="s2" oninput="update('s2','n2')">
+</div>
+<div class="slider-item">
+<div class="top"><span class="name">校园环境</span><span class="num" id="n3">5</span></div>
+<input type="range" min="1" max="10" value="5" id="s3" oninput="update('s3','n3')">
+</div>
+<div class="slider-item">
+<div class="top"><span class="name">食堂伙食</span><span class="num" id="n4">5</span></div>
+<input type="range" min="1" max="10" value="5" id="s4" oninput="update('s4','n4')">
+</div>
+<div class="slider-item">
+<div class="top"><span class="name">宿舍条件</span><span class="num" id="n5">5</span></div>
+<input type="range" min="1" max="10" value="5" id="s5" oninput="update('s5','n5')">
+</div>
+<div class="slider-item">
+<div class="top"><span class="name">学习氛围</span><span class="num" id="n6">5</span></div>
+<input type="range" min="1" max="10" value="5" id="s6" oninput="update('s6','n6')">
+</div>
+
+<label>评价人称呼</label>
+<input type="text" id="name">
+<label>留言</label>
+<textarea id="msgText"></textarea>
+
+<button class="submit-btn" onclick="save()">提交评分</button>
+<div class="avg-box">
+<div class="txt">综合平均分</div>
+<div class="score" id="avg">--</div>
+</div>
+<h2 style="margin-top:36px">历史记录</h2>
+<div id="history"></div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="footer">© 个人主页 · GitHub Pages</div>
+
+<script>
+function switchTab(n){
+document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===n));
+document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('show',i===n));
+}
+function update(sid,nid){
+document.getElementById(nid).innerText=document.getElementById(sid).value;
+}
+function toast(txt){
+let t=document.getElementById('toast');
+t.innerText=txt;
+t.classList.add('show');
+setTimeout(()=>t.classList.remove('show'),2200);
+}
+function save(){
+let school=document.getElementById('school').value;
+if(!school){toast("请先选择院校！");return;}
+let s1=+document.getElementById('s1').value;
+let s2=+document.getElementById('s2').value;
+let s3=+document.getElementById('s3').value;
+let s4=+document.getElementById('s4').value;
+let s5=+document.getElementById('s5').value;
+let s6=+document.getElementById('s6').value;
+let avg=((s1+s2+s3+s4+s5+s6)/6).toFixed(1);
+document.getElementById('avg').innerText=avg;
+let name=document.getElementById('name').value;
+let msgText=document.getElementById('msgText').value;
+let rec={school,avg,name,msgText,time:new Date().toLocaleString()};
+let list=JSON.parse(localStorage.getItem('scoreList')||'[]');
+list.push(rec);
+localStorage.setItem('scoreList',JSON.stringify(list));
+render();
+toast("提交成功，保存在本机浏览器");
+}
+function render(){
+let list=JSON.parse(localStorage.getItem('scoreList')||'[]');
+let box=document.getElementById('history');
+if(list.length===0){box.innerHTML='暂无记录';return;}
+box.innerHTML=list.map(x=>'<div class="history-item">'+x.school+'｜'+x.avg+'分｜'+(x.name||'匿名')+'｜'+x.time+'<br>'+x.msgText+'</div>').join('');
+}
+render();
+</script>
+</body>
+</html>
