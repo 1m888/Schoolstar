@@ -3,170 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schoolstar · 择校平台</title>
+    <title>Schoolstar · 择校评分</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
-        :root {
-            --bg: #111113;
-            --card: #1c1c20;
-            --text: #f4f4f6;
-            --text-light: #8a8a93;
-            --accent: #60a5fa;
-            --line: #2f2f37;
-            --radius: 22px;
-            --transition-page: 0.32s cubic-bezier(0.25, 1, 0.5, 1);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
         }
         body {
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: #111113;
+            color: #f4f4f6;
+            padding: 24px 16px;
             min-height: 100vh;
-            overflow-x: hidden;
         }
         .container {
-            max-width: 740px;
+            max-width: 720px;
             margin: 0 auto;
-            padding: 22px 16px;
         }
-        /* 页面路由容器 & 页面切换动画核心 */
-        .router-view {
-            position: relative;
-            overflow: hidden;
-            min-height: calc(100vh - 84px);
+        .header {
+            margin-bottom: 32px;
         }
-        .page {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            opacity: 0;
-            transform: translateX(24px);
-            pointer-events: none;
-            transition: var(--transition-page);
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.4px;
+            margin-bottom: 6px;
         }
-        .page.active {
-            opacity: 1;
-            transform: translateX(0);
-            pointer-events: auto;
-            position: relative;
+        .header p {
+            color: #8a8a93;
+            font-size: 15px;
         }
-        .page.leave {
-            opacity: 0;
-            transform: translateX(-24px);
-        }
-        /* 导航栏 */
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 99;
-            background: rgba(17,17,19,0.82);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--line);
-        }
-        .nav-inner {
-            max-width: 740px;
-            margin: 0 auto;
-            padding:14px 16px;
-            display:flex;
-            align-items:center;
-            justify-content: space-between;
-        }
-        .nav-logo {
-            font-size: 20px;
-            font-weight:700;
-        }
-        .nav-link-group a {
-            color: var(--text-light);
-            text-decoration:none;
-            margin-left:18px;
-            font-size:15px;
-            transition: color .2s;
-        }
-        .nav-link-group a:hover {
-            color: var(--text);
-        }
-        .back-btn {
-            color: var(--accent);
-            text-decoration:none;
-            display:flex;
-            align-items:center;
-            gap:4px;
-            font-size:15px;
-        }
-        /* 卡片通用样式 */
         .card {
-            background: var(--card);
-            border-radius: var(--radius);
+            background: #1c1c20;
+            border-radius: 20px;
             padding: 22px;
-            margin-bottom:18px;
+            margin-bottom: 20px;
         }
-        .school-card {
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .school-card:active {
-            transform: scale(0.97);
-        }
-        .school-card-img {
-            width:100%;
-            height:170px;
-            border-radius:16px;
-            object-fit:cover;
-            margin-bottom:14px;
-        }
-        .school-title-row {
-            display:flex;
-            justify-content:space-between;
-            align-items:flex-start;
-            margin-bottom:6px;
-        }
-        .school-name {
-            font-size:18px;
-            font-weight:600;
-        }
-        .school-tag {
-            background:rgba(96,165,250,0.16);
-            color:var(--accent);
-            padding:3px 9px;
-            border-radius:99px;
-            font-size:12px;
-        }
-        .school-desc {
-            color:var(--text-light);
-            font-size:14px;
-            line-height:1.5;
-            margin-top:6px;
-        }
-        .school-score-line {
-            display:flex;
-            gap:12px;
-            margin-top:12px;
-        }
-        .score-item {
-            font-size:13px;
-            color:var(--text-light);
-        }
-        /* 图片相册（详情页） */
-        .gallery-wrap {
-            display:grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap:10px;
-            margin:16px 0 24px;
-        }
-        .gallery-img {
-            width:100%;
-            height:130px;
-            border-radius:14px;
-            object-fit:cover;
-        }
-        /* 评分滑块区域，沿用之前丝滑方案 */
         .radar-wrap {
             width: 100%;
             height: 340px;
@@ -185,7 +59,7 @@
             color: #e9e9ec;
         }
         .slider-val {
-            color: var(--accent);
+            color: #60a5fa;
             font-weight: 500;
         }
         input[type="range"] {
@@ -193,7 +67,7 @@
             width: 100%;
             height: 6px;
             border-radius: 999px;
-            background: var(--line);
+            background: #2f2f37;
             outline: none;
             touch-action: none;
         }
@@ -211,370 +85,147 @@
             transform: scale(1.15);
             cursor: grabbing;
         }
-        .page-title {
-            font-size:26px;
-            font-weight:600;
-            margin-bottom:8px;
-        }
-        .page-sub {
-            color:var(--text-light);
-            font-size:15px;
-            margin-bottom:24px;
-        }
-        .divider {
-            height:1px;
-            background:var(--line);
-            margin:22px 0;
-        }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="nav-inner">
-            <a href="#/" class="nav-logo">Schoolstar</a>
-            <div class="nav-link-group">
-                <a href="#/list">全部学校</a>
-                <a href="#/score">评分工具</a>
-                <a href="#/compare">学校对比</a>
+    <div class="container">
+        <div class="header">
+            <h1>Schoolstar</h1>
+            <p>多维度择校评分 · 拖动滑块实时评估</p>
+        </div>
+        <div class="card">
+            <div class="radar-wrap">
+                <canvas id="radarChart"></canvas>
             </div>
         </div>
-    </nav>
-
-    <div class="container">
-        <div class="router-view">
-            <!-- 【首页】 -->
-            <div class="page" id="page-home">
-                <h2 class="page-title">欢迎来到 Schoolstar</h2>
-                <p class="page-sub">择校参考 · 多维度评估校园，帮你找到合适的学校</p>
-                <div class="card school-card" data-id="school1">
-                    <img class="school-card-img" src="https://picsum.photos/id/20/800/400" alt="一中">
-                    <div class="school-title-row">
-                        <div class="school-name">第一高级中学</div>
-                        <span class="school-tag">公办重点</span>
-                    </div>
-                    <p class="school-desc">老牌省一级重点，升学出口稳定，管理偏严谨，寄宿制为主。</p>
-                    <div class="school-score-line">
-                        <span class="score-item">师资 8.2</span>
-                        <span class="score-item">校风 8.6</span>
-                        <span class="score-item">食宿 7.3</span>
-                    </div>
+        <div class="card">
+            <div class="slider-item">
+                <div class="slider-top">
+                    <span class="slider-name">教学师资</span>
+                    <span class="slider-val" id="v1">7.5</span>
                 </div>
-                <div class="card school-card" data-id="school2">
-                    <img class="school-card-img" src="https://picsum.photos/id/26/800/400" alt="实验中学">
-                    <div class="school-title-row">
-                        <div class="school-name">实验高级中学</div>
-                        <span class="school-tag">民办特色</span>
-                    </div>
-                    <p class="school-desc">素质教育方向，课外活动丰富，硬件设施新，学费偏高。</p>
-                    <div class="school-score-line">
-                        <span class="score-item">师资 7.7</span>
-                        <span class="score-item">校风 7.5</span>
-                        <span class="score-item">食宿 8.8</span>
-                    </div>
-                </div>
-                <div class="card school-card" data-id="school3">
-                    <img class="school-card-img" src="https://picsum.photos/id/36/800/400" alt="三中">
-                    <div class="school-title-row">
-                        <div class="school-name">第三中学</div>
-                        <span class="school-tag">公办普通</span>
-                    </div>
-                    <p class="school-desc">走读为主，压力适中，适合追求轻松校园节奏的学生。</p>
-                    <div class="school-score-line">
-                        <span class="score-item">师资 6.9</span>
-                        <span class="score-item">校风 7.2</span>
-                        <span class="score-item">食宿 6.1</span>
-                    </div>
-                </div>
+                <input type="range" id="s1" min="0" max="10" step="0.1" value="7.5">
             </div>
-
-            <!-- 【学校列表页】 -->
-            <div class="page" id="page-list">
-                <h2 class="page-title">全部学校</h2>
-                <p class="page-sub">浏览收录的所有学校档案，点击卡片查看详情</p>
-                <div class="card school-card" data-id="school1">
-                    <img class="school-card-img" src="https://picsum.photos/id/20/800/400" alt="一中">
-                    <div class="school-title-row">
-                        <div class="school-name">第一高级中学</div>
-                        <span class="school-tag">公办重点</span>
-                    </div>
-                    <p class="school-desc">老牌省一级重点，升学出口稳定，管理偏严谨，寄宿制为主。</p>
+            <div class="slider-item">
+                <div class="slider-top">
+                    <span class="slider-name">校风管理</span>
+                    <span class="slider-val" id="v2">8.0</span>
                 </div>
-                <div class="card school-card" data-id="school2">
-                    <img class="school-card-img" src="https://picsum.photos/id/26/800/400" alt="实验中学">
-                    <div class="school-title-row">
-                        <div class="school-name">实验高级中学</div>
-                        <span class="school-tag">民办特色</span>
-                    </div>
-                    <p class="school-desc">素质教育方向，课外活动丰富，硬件设施新，学费偏高。</p>
-                </div>
-                <div class="card school-card" data-id="school3">
-                    <img class="school-card-img" src="https://picsum.photos/id/36/800/400" alt="三中">
-                    <div class="school-title-row">
-                        <div class="school-name">第三中学</div>
-                        <span class="school-tag">公办普通</span>
-                    </div>
-                    <p class="school-desc">走读为主，压力适中，适合追求轻松校园节奏的学生。</p>
-                </div>
+                <input type="range" id="s2" min="0" max="10" step="0.1" value="8.0">
             </div>
-
-            <!-- 【评分工具页（保留你丝滑雷达滑块）】 -->
-            <div class="page" id="page-score">
-                <h2 class="page-title">评分评估工具</h2>
-                <p class="page-sub">拖动滑块，生成学校多维评分雷达图</p>
-                <div class="card">
-                    <div class="radar-wrap">
-                        <canvas id="radarChart"></canvas>
-                    </div>
+            <div class="slider-item">
+                <div class="slider-top">
+                    <span class="slider-name">升学成绩</span>
+                    <span class="slider-val" id="v3">7.2</span>
                 </div>
-                <div class="card">
-                    <div class="slider-item">
-                        <div class="slider-top">
-                            <span class="slider-name">教学师资</span>
-                            <span class="slider-val" id="v1">7.5</span>
-                        </div>
-                        <input type="range" id="s1" min="0" max="10" step="0.1" value="7.5">
-                    </div>
-                    <div class="slider-item">
-                        <div class="slider-top">
-                            <span class="slider-name">校风管理</span>
-                            <span class="slider-val" id="v2">8.0</span>
-                        </div>
-                        <input type="range" id="s2" min="0" max="10" step="0.1" value="8.0">
-                    </div>
-                    <div class="slider-item">
-                        <div class="slider-top">
-                            <span class="slider-name">升学成绩</span>
-                            <span class="slider-val" id="v3">7.2</span>
-                        </div>
-                        <input type="range" id="s3" min="0" max="10" step="0.1" value="7.2">
-                    </div>
-                    <div class="slider-item">
-                        <div class="slider-top">
-                            <span class="slider-name">食宿条件</span>
-                            <span class="slider-val" id="v4">6.8</span>
-                        </div>
-                        <input type="range" id="s4" min="0" max="10" step="0.1" value="6.8">
-                    </div>
-                    <div class="slider-item">
-                        <div class="slider-top">
-                            <span class="slider-name">作业压力</span>
-                            <span class="slider-val" id="v5">7.7</span>
-                        </div>
-                        <input type="range" id="s5" min="0" max="10" step="0.1" value="7.7">
-                    </div>
-                    <div class="slider-item">
-                        <div class="slider-top">
-                            <span class="slider-name">课外活动</span>
-                            <span class="slider-val" id="v6">6.3</span>
-                        </div>
-                        <input type="range" id="s6" min="0" max="10" step="0.1" value="6.3">
-                    </div>
-                </div>
+                <input type="range" id="s3" min="0" max="10" step="0.1" value="7.2">
             </div>
-
-            <!-- 【对比页面】 -->
-            <div class="page" id="page-compare">
-                <h2 class="page-title">学校横向对比</h2>
-                <p class="page-sub">选择学校，直观对比各项指标</p>
-                <div class="card">
-                    <p style="color:var(--text-light);margin-bottom:12px;">对比功能后续扩展：勾选学校，生成叠加雷达图</p>
-                    <p>当前示例：一中 VS 实验中学</p>
-                    <div class="divider"></div>
-                    <p>✅ 师资：一中8.2｜实验7.7</p>
-                    <p>✅ 食宿：一中7.3｜实验8.8</p>
-                    <p>✅ 升学：一中8.4｜实验7.4</p>
+            <div class="slider-item">
+                <div class="slider-top">
+                    <span class="slider-name">食宿条件</span>
+                    <span class="slider-val" id="v4">6.8</span>
                 </div>
+                <input type="range" id="s4" min="0" max="10" step="0.1" value="6.8">
             </div>
-
-            <!-- 【详情页容器，JS动态填充学校数据+相册】 -->
-            <div class="page" id="page-detail">
-                <a href="javascript:backRoute()" class="back-btn">← 返回</a>
-                <div id="detail-content"></div>
+            <div class="slider-item">
+                <div class="slider-top">
+                    <span class="slider-name">作业压力</span>
+                    <span class="slider-val" id="v5">7.7</span>
+                </div>
+                <input type="range" id="s5" min="0" max="10" step="0.1" value="7.7">
+            </div>
+            <div class="slider-item">
+                <div class="slider-top">
+                    <span class="slider-name">课外活动</span>
+                    <span class="slider-val" id="v6">6.3</span>
+                </div>
+                <input type="range" id="s6" min="0" max="10" step="0.1" value="6.3">
             </div>
         </div>
     </div>
 
     <script>
-        // ========== 学校数据源（你在这里新增学校、替换图片链接） ==========
-        const schoolData = {
-            school1: {
-                name: "第一高级中学",
-                tag: "公办重点",
-                desc: "老牌省一级重点中学，办学历史久，师资稳定，高考升学表现长期稳定。实行寄宿管理，作息规范，学风浓厚。",
-                gallery: [
-                    "https://picsum.photos/id/20/800/500",
-                    "https://picsum.photos/id/21/800/500",
-                    "https://picsum.photos/id/22/800/500",
-                    "https://picsum.photos/id/23/800/500",
-                ],
-                info: {
-                    性质: "公办省重点",
-                    住宿: "全寄宿，可申请走读",
-                    分数线: "628分",
-                    本科率: "94%",
-                }
-            },
-            school2: {
-                name: "实验高级中学",
-                tag: "民办特色",
-                desc: "新锐民办高中，硬件设施全新，重视科创、艺术等素质拓展，活动很多，校园环境舒适，学费相对较高。",
-                gallery: [
-                    "https://picsum.photos/id/26/800/500",
-                    "https://picsum.photos/id/27/800/500",
-                    "https://picsum.photos/id/28/800/500",
-                    "https://picsum.photos/id/29/800/500",
-                ],
-                info: {
-                    性质: "民办高中",
-                    住宿: "寄宿为主，宿舍条件好",
-                    分数线: "605分",
-                    本科率: "86%",
-                }
-            },
-            school3: {
-                name: "第三中学",
-                tag: "公办普通",
-                desc: "城区公办普通高中，以走读生为主，管理宽松，作业压力适中，适合不想高强度内卷的学生。",
-                gallery: [
-                    "https://picsum.photos/id/36/800/500",
-                    "https://picsum.photos/id/37/800/500",
-                    "https://picsum.photos/id/38/800/500",
-                    "https://picsum.photos/id/39/800/500",
-                ],
-                info: {
-                    性质: "公办普高",
-                    住宿: "少量床位，大多走读",
-                    分数线: "572分",
-                    本科率: "72%",
-                }
-            }
-        };
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        // 目标值（滑块实时更新这个）
+        const target = [7.5, 8.0, 7.2, 6.8, 7.7, 6.3];
+        // 当前渲染值，用来做平滑插值
+        const current = [...target];
+        // 平滑系数，越小越丝滑、越慢；0.22是兼顾流畅和跟手
+        const smoothFactor = 0.22;
 
-        // ========== 路由系统 + 统一页面切换动画 ==========
-        let currentRoute = "";
-        function renderRoute() {
-            const hash = location.hash || "#/";
-            const pages = document.querySelectorAll(".page");
-            // 先标记离开动画
-            pages.forEach(p => {
-                if(p.classList.contains('active')) {
-                    p.classList.add('leave');
-                    setTimeout(()=> p.classList.remove('active','leave'),320)
-                } else {
-                    p.classList.remove('active','leave')
-                }
-            })
-            setTimeout(()=>{
-                if(hash === "#/" || hash === "") {
-                    document.getElementById("page-home").classList.add("active");
-                } else if(hash === "#/list") {
-                    document.getElementById("page-list").classList.add("active");
-                } else if(hash === "#/score") {
-                    document.getElementById("page-score").classList.add("active");
-                    if(!window.radarInited) initRadar();
-                } else if(hash === "#/compare") {
-                    document.getElementById("page-compare").classList.add("active");
-                } else if(hash.startsWith("#/detail/")) {
-                    const sid = hash.replace("#/detail/","");
-                    const school = schoolData[sid];
-                    if(!school) return location.hash="#/";
-                    // 填充详情页相册和信息
-                    const galleryHtml = school.gallery.map(img=>`<img class="gallery-img" src="${img}">`).join('');
-                    const infoHtml = Object.entries(school.info).map(([k,v])=>`<p>${k}：${v}</p>`).join('');
-                    document.getElementById("detail-content").innerHTML = `
-                        <h2 class="page-title">${school.name}</h2>
-                        <span class="school-tag">${school.tag}</span>
-                        <p class="page-sub">${school.desc}</p>
-                        <div class="gallery-wrap">${galleryHtml}</div>
-                        <div class="card">
-                            <h3 style="margin-bottom:12px;">学校档案</h3>
-                            ${infoHtml}
-                        </div>
-                    `;
-                    document.getElementById("page-detail").classList.add("active");
-                }
-            }, 30)
-        }
-        window.addEventListener("hashchange", renderRoute);
-        window.backRoute = function(){ history.back(); }
-        // 卡片点击跳转详情
-        document.querySelectorAll(".school-card").forEach(card=>{
-            card.onclick = ()=>{
-                const id = card.dataset.id;
-                location.hash = "#/detail/"+id;
-            }
-        })
-        renderRoute();
-
-        // ========== 丝滑雷达评分（沿用你之前的插值方案，保证拖动顺滑） ==========
-        let radarInited = false;
-        function initRadar() {
-            radarInited = true;
-            const ctx = document.getElementById('radarChart').getContext('2d');
-            const target = [7.5, 8.0, 7.2, 6.8, 7.7, 6.3];
-            const current = [...target];
-            const smoothFactor = 0.22;
-            const radar = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['教学师资','校风管理','升学成绩','食宿条件','作业压力','课外活动'],
-                    datasets: [{
-                        label: '学校评分',
-                        data: current,
-                        backgroundColor: 'rgba(96,165,250,0.14)',
-                        borderColor: '#60a5fa',
-                        pointBackgroundColor: '#60a5fa',
-                        pointRadius: 4,
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive:true,
-                    maintainAspectRatio:false,
-                    scales:{
-                        r:{
-                            min:0,max:10,
-                            ticks:{display:false},
-                            grid:{color:'#33333b'},
-                            angleLines:{color:'#33333b'},
-                            pointLabels:{color:'#d1d1db',font:{size:13}}
-                        }
-                    },
-                    plugins:{legend:{display:false}},
-                    animation:{duration:0}
-                }
-            });
-            const sliders = [
-                document.getElementById('s1'),document.getElementById('s2'),document.getElementById('s3'),
-                document.getElementById('s4'),document.getElementById('s5'),document.getElementById('s6'),
-            ];
-            const valsDom = [
-                document.getElementById('v1'),document.getElementById('v2'),document.getElementById('v3'),
-                document.getElementById('v4'),document.getElementById('v5'),document.getElementById('v6'),
-            ];
-            sliders.forEach((el,idx)=>{
-                el.addEventListener('input',()=>{
-                    target[idx] = Number(el.value);
-                    valsDom[idx].textContent = target[idx].toFixed(1);
-                })
-            })
-            function animateSmooth(){
-                let needRender = false;
-                for(let i=0;i<current.length;i++){
-                    const diff = target[i] - current[i];
-                    if(Math.abs(diff) > 0.01){
-                        current[i] += diff * smoothFactor;
-                        needRender = true;
+        const radar = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['教学师资','校风管理','升学成绩','食宿条件','作业压力','课外活动'],
+                datasets: [{
+                    label: '学校评分',
+                    data: current,
+                    backgroundColor: 'rgba(96,165,250,0.14)',
+                    borderColor: '#60a5fa',
+                    pointBackgroundColor: '#60a5fa',
+                    pointRadius: 4,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive:true,
+                maintainAspectRatio:false,
+                scales:{
+                    r:{
+                        min:0,max:10,
+                        ticks:{display:false},
+                        grid:{color:'#33333b'},
+                        angleLines:{color:'#33333b'},
+                        pointLabels:{color:'#d1d1db',font:{size:13}}
                     }
-                }
-                if(needRender){
-                    radar.data.datasets[0].data = current;
-                    radar.update('none');
-                }
-                requestAnimationFrame(animateSmooth);
+                },
+                plugins:{legend:{display:false}},
+                animation:{duration:0} // 关掉chart自带动画，我们自己用requestAnimationFrame插值！
             }
-            animateSmooth();
+        });
+
+        // 绑定滑块
+        const sliders = [
+            document.getElementById('s1'),
+            document.getElementById('s2'),
+            document.getElementById('s3'),
+            document.getElementById('s4'),
+            document.getElementById('s5'),
+            document.getElementById('s6'),
+        ];
+        const valsDom = [
+            document.getElementById('v1'),
+            document.getElementById('v2'),
+            document.getElementById('v3'),
+            document.getElementById('v4'),
+            document.getElementById('v5'),
+            document.getElementById('v6'),
+        ];
+
+        sliders.forEach((el,idx)=>{
+            el.addEventListener('input',()=>{
+                target[idx] = Number(el.value);
+                valsDom[idx].textContent = target[idx].toFixed(1);
+            })
+        })
+
+        // 核心：持续插值平滑循环
+        function animateSmooth(){
+            let needRender = false;
+            for(let i=0;i<current.length;i++){
+                const diff = target[i] - current[i];
+                if(Math.abs(diff) > 0.01){
+                    current[i] += diff * smoothFactor;
+                    needRender = true;
+                }
+            }
+            if(needRender){
+                radar.data.datasets[0].data = current;
+                radar.update('none');
+            }
+            requestAnimationFrame(animateSmooth);
         }
+        animateSmooth();
     </script>
 </body>
 </html>
